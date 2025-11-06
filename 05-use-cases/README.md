@@ -1,0 +1,689 @@
+# 05. 실무 유스케이스 완성 프로젝트
+
+## 📚 학습 목표
+
+- 실제 비즈니스 시나리오에 n8n 적용하기
+- 여러 노드를 조합한 복잡한 워크플로우 구축
+- 확장 가능하고 유지보수 가능한 자동화 시스템 설계
+- 실전 문제 해결 능력 향상
+
+---
+
+## 🎯 프로젝트 1: 종합 비즈니스 대시보드 자동화
+
+### 비즈니스 요구사항
+
+경영진은 매일 아침 다음 정보를 한눈에 보고 싶어합니다:
+- 어제의 매출 현황
+- 웹사이트 방문자 통계
+- 고객 문의 현황 및 대응률
+- 재고 경고 알림
+- 경쟁사 가격 변동
+
+### 아키텍처 설계
+
+```
+[Schedule: 매일 오전 8시]
+    ↓
+[병렬 데이터 수집]
+├─ Google Sheets (매출 데이터)
+├─ Google Analytics API (웹사이트 통계)
+├─ Gmail API (고객 문의)
+├─ 재고 DB 조회
+└─ 웹 스크래핑 (경쟁사 가격)
+    ↓
+[데이터 통합 및 분석]
+    ↓
+[AI 인사이트 생성]
+    ↓
+[보고서 생성]
+├─ Google Slides 자동 생성
+├─ PDF 변환
+└─ 이메일 발송
+```
+
+### 단계별 구현
+
+#### 1단계: Schedule Trigger 설정
+```
+Cron Expression: 0 8 * * *
+Description: 매일 오전 8시 실행
+Timezone: Asia/Seoul
+```
+
+#### 2단계: 데이터 수집 (병렬 처리)
+
+**2-1. 매출 데이터 수집**
+```javascript
+// Google Sheets에서 어제 매출 가져오기
+const yesterday = new Date();
+yesterday.setDate(yesterday.getDate() - 1);
+const dateStr = yesterday.toLocaleDateString('ko-KR');
+
+// Google Sheets Lookup
+Operation: Read
+Sheet: 매출관리
+Range: A:E
+Filter: 날짜 = dateStr
+```
+
+**2-2. 웹사이트 통계 (Google Analytics)**
+```javascript
+// HTTP Request to Google Analytics API
+const yesterday = new Date();
+yesterday.setDate(yesterday.getDate() - 1);
+
+{
+  "dateRanges": [{
+    "startDate": yesterday.toISOString().split('T')[0],
+    "endDate": yesterday.toISOString().split('T')[0]
+  }],
+  "metrics": [
+    {"name": "sessions"},
+    {"name": "users"},
+    {"name": "pageviews"},
+    {"name": "conversions"}
+  ]
+}
+```
+
+**2-3. 고객 문의 현황**
+```javascript
+// Gmail API로 어제 받은 이메일 수집
+// 또는 Google Sheets의 문의 로그 읽기
+
+const emails = $node["Gmail"].json;
+const total = emails.length;
+const responded = emails.filter(e => e.status === "답변완료").length;
+const pending = total - responded;
+const responseRate = ((responded / total) * 100).toFixed(1);
+
+return {
+  total_inquiries: total,
+  responded: responded,
+  pending: pending,
+  response_rate: responseRate
+};
+```
+
+**2-4. 재고 경고**
+```javascript
+// Google Sheets에서 재고 수준 확인
+const inventory = $node["Google Sheets Inventory"].json;
+
+const lowStock = inventory.filter(item => {
+  return parseInt(item.현재재고) < parseInt(item.안전재고);
+});
+
+const outOfStock = inventory.filter(item => {
+  return parseInt(item.현재재고) === 0;
+});
+
+return {
+  low_stock_items: lowStock,
+  out_of_stock_items: outOfStock,
+  alert_count: lowStock.length + outOfStock.length
+};
+```
+
+**2-5. 경쟁사 가격**
+```javascript
+// 이전에 만든 가격 모니터링 워크플로우 실행
+// Execute Workflow 노드 사용
+
+const priceChanges = $node["Price Monitoring"].json;
+
+const significantChanges = priceChanges.filter(item => {
+  return Math.abs(item.change_percent) >= 5;
+});
+
+return {
+  total_monitored: priceChanges.length,
+  significant_changes: significantChanges,
+  needs_attention: significantChanges.length > 0
+};
+```
+
+#### 3단계: 데이터 통합
+
+```javascript
+// Merge 노드로 모든 데이터 통합
+const salesData = $node["Sales Data"].json;
+const webStats = $node["Google Analytics"].json;
+const inquiries = $node["Customer Inquiries"].json;
+const inventory = $node["Inventory Check"].json;
+const pricing = $node["Competitor Pricing"].json;
+
+// KPI 계산
+const totalRevenue = salesData.reduce((sum, item) => sum + item.금액, 0);
+const averageOrderValue = totalRevenue / salesData.length;
+const conversionRate = ((webStats.conversions / webStats.sessions) * 100).toFixed(2);
+
+// 전일 대비 증감률 (이전 데이터와 비교)
+const previousRevenue = $node["Previous Day Sales"].json.total || totalRevenue;
+const revenueGrowth = (((totalRevenue - previousRevenue) / previousRevenue) * 100).toFixed(2);
+
+return {
+  date: new Date().toLocaleDateString('ko-KR'),
+
+  // 매출
+  revenue: {
+    total: totalRevenue,
+    orders: salesData.length,
+    average_order_value: Math.round(averageOrderValue),
+    growth_rate: parseFloat(revenueGrowth)
+  },
+
+  // 웹사이트
+  website: {
+    sessions: webStats.sessions,
+    users: webStats.users,
+    pageviews: webStats.pageviews,
+    conversion_rate: parseFloat(conversionRate)
+  },
+
+  // 고객 서비스
+  customer_service: {
+    total_inquiries: inquiries.total_inquiries,
+    response_rate: parseFloat(inquiries.response_rate),
+    pending: inquiries.pending
+  },
+
+  // 재고
+  inventory: {
+    alert_count: inventory.alert_count,
+    low_stock: inventory.low_stock_items.length,
+    out_of_stock: inventory.out_of_stock_items.length
+  },
+
+  // 경쟁사
+  competitor: {
+    price_changes: pricing.significant_changes.length,
+    needs_attention: pricing.needs_attention
+  }
+};
+```
+
+#### 4단계: AI 인사이트 생성
+
+```javascript
+// OpenAI 노드로 데이터 분석 및 인사이트 추출
+
+System Message:
+"당신은 비즈니스 데이터 분석 전문가입니다.
+다음 일일 KPI 데이터를 분석하고 경영진에게 제공할 핵심 인사이트를 추출해주세요.
+
+분석 포인트:
+1. 주요 성과 하이라이트 (긍정적 지표)
+2. 주의가 필요한 영역 (부정적 지표 또는 리스크)
+3. 구체적인 액션 아이템 (개선 제안)
+
+JSON 형식으로 응답:
+{
+  \"highlights\": [\"하이라이트1\", \"하이라이트2\"],
+  \"concerns\": [\"우려사항1\", \"우려사항2\"],
+  \"action_items\": [\"액션1\", \"액션2\"],
+  \"summary\": \"전반적인 요약 (2-3문장)\"
+}"
+
+User Message:
+"{{JSON.stringify($json)}}"
+```
+
+#### 5단계: 보고서 생성
+
+**5-1. 이메일 템플릿 생성**
+
+```html
+<!DOCTYPE html>
+<html>
+<head>
+  <style>
+    body { font-family: Arial, sans-serif; }
+    .header { background: #4CAF50; color: white; padding: 20px; }
+    .kpi-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+    .kpi-card { border: 1px solid #ddd; padding: 15px; border-radius: 8px; }
+    .kpi-value { font-size: 32px; font-weight: bold; color: #4CAF50; }
+    .positive { color: #4CAF50; }
+    .negative { color: #f44336; }
+    .alert { background: #fff3cd; padding: 10px; border-left: 4px solid #ffc107; }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <h1>📊 일일 비즈니스 리포트</h1>
+    <p>{{$json.date}}</p>
+  </div>
+
+  <div class="kpi-grid">
+    <div class="kpi-card">
+      <h3>💰 매출</h3>
+      <div class="kpi-value">₩{{$json.revenue.total.toLocaleString()}}</div>
+      <p class="{{$json.revenue.growth_rate >= 0 ? 'positive' : 'negative'}}">
+        전일 대비 {{$json.revenue.growth_rate}}%
+      </p>
+    </div>
+
+    <div class="kpi-card">
+      <h3>🌐 웹사이트</h3>
+      <div class="kpi-value">{{$json.website.sessions}}</div>
+      <p>전환율: {{$json.website.conversion_rate}}%</p>
+    </div>
+
+    <div class="kpi-card">
+      <h3>📧 고객 문의</h3>
+      <div class="kpi-value">{{$json.customer_service.response_rate}}%</div>
+      <p>대응률 ({{$json.customer_service.responded}}/{{$json.customer_service.total_inquiries}})</p>
+    </div>
+  </div>
+
+  <div style="margin-top: 30px;">
+    <h2>🎯 AI 인사이트</h2>
+
+    <h3>✅ 주요 성과</h3>
+    <ul>
+      {{#each $json.insights.highlights}}
+        <li>{{this}}</li>
+      {{/each}}
+    </ul>
+
+    <h3>⚠️ 주의 영역</h3>
+    <ul>
+      {{#each $json.insights.concerns}}
+        <li>{{this}}</li>
+      {{/each}}
+    </ul>
+
+    <h3>💡 액션 아이템</h3>
+    <ul>
+      {{#each $json.insights.action_items}}
+        <li>{{this}}</li>
+      {{/each}}
+    </ul>
+  </div>
+
+  {{#if $json.inventory.alert_count > 0}}
+  <div class="alert">
+    <strong>⚠️ 재고 경고:</strong> {{$json.inventory.alert_count}}개 품목의 재고가 부족합니다.
+  </div>
+  {{/if}}
+</body>
+</html>
+```
+
+**5-2. 이메일 발송**
+
+```
+Send Email Node:
+To: management@company.com
+Subject: [일일 리포트] {{$json.date}} 비즈니스 현황
+Body: HTML 템플릿
+Attachments: (선택) PDF 보고서
+```
+
+### 📝 실습 과제
+
+**과제 1**: 실시간 알림 추가
+- 특정 임계값 초과 시 즉시 알림 (예: 매출 -20% 이상 감소)
+- Slack으로 실시간 알림
+
+**과제 2**: 주간/월간 리포트
+- 일일 데이터를 집계하여 주간 트렌드 분석
+- 월말 종합 보고서 자동 생성
+
+**과제 3**: 인터랙티브 대시보드
+- Google Data Studio 또는 Tableau에 자동 업데이트
+- 실시간 차트 및 그래프
+
+---
+
+## 🎯 프로젝트 2: 스마트 고객 지원 시스템
+
+### 비즈니스 요구사항
+
+고객 문의를 효율적으로 처리하기 위한 통합 시스템:
+- 다중 채널 문의 수집 (이메일, 챗봇, 문의 양식)
+- AI 기반 자동 분류 및 우선순위 설정
+- 적절한 담당자에게 자동 할당
+- 자동 응답 및 에스컬레이션
+- 성과 추적 및 분석
+
+### 아키텍처 설계
+
+```
+[다중 트리거]
+├─ Webhook (웹사이트 문의 양식)
+├─ Gmail Trigger (이메일)
+└─ Slack Trigger (챗봇)
+    ↓
+[데이터 표준화]
+    ↓
+[AI 분석]
+├─ 감정 분석
+├─ 카테고리 분류
+└─ 우선순위 계산
+    ↓
+[담당자 할당]
+    ↓
+[자동 응답] ←→ [티켓 생성]
+    ↓
+[통계 업데이트]
+```
+
+### 실습 과제
+
+**과제**: 전체 시스템 구현
+- 위 아키텍처를 참고하여 완전한 고객 지원 시스템 구축
+- 각 단계별 에러 처리 및 로깅 추가
+- 성과 지표 대시보드 생성
+
+---
+
+## 🎯 프로젝트 3: 마케팅 자동화 캠페인
+
+### 비즈니스 요구사항
+
+리드 생성부터 고객 전환까지 자동화:
+- 웹사이트 방문자 행동 추적
+- 리드 스코어링 (점수 매기기)
+- 개인화된 이메일 시퀀스
+- A/B 테스트 자동 실행
+- 전환 추적 및 ROI 계산
+
+### 워크플로우 예제
+
+#### 리드 스코어링 시스템
+
+```javascript
+// 방문자 행동 데이터
+const actions = $json.user_actions;
+
+let score = 0;
+const scoreLog = [];
+
+// 행동별 점수 부여
+const scoringRules = {
+  "page_view": { "/pricing": 10, "/features": 5, "/blog": 2 },
+  "download": { "whitepaper": 20, "trial": 30 },
+  "video_watch": { "duration_threshold": 60, "score": 15 },
+  "form_submit": { "contact": 50, "demo": 60, "newsletter": 10 }
+};
+
+// 점수 계산
+actions.forEach(action => {
+  if (action.type === "page_view") {
+    const pageScore = scoringRules.page_view[action.page] || 1;
+    score += pageScore;
+    scoreLog.push({ action: `페이지 방문: ${action.page}`, score: pageScore });
+  }
+
+  if (action.type === "download") {
+    const downloadScore = scoringRules.download[action.resource] || 10;
+    score += downloadScore;
+    scoreLog.push({ action: `자료 다운로드: ${action.resource}`, score: downloadScore });
+  }
+
+  if (action.type === "video_watch" && action.duration >= 60) {
+    score += 15;
+    scoreLog.push({ action: "영상 시청", score: 15 });
+  }
+
+  if (action.type === "form_submit") {
+    const formScore = scoringRules.form_submit[action.form_type] || 20;
+    score += formScore;
+    scoreLog.push({ action: `폼 제출: ${action.form_type}`, score: formScore });
+  }
+});
+
+// 등급 분류
+let leadGrade;
+if (score >= 80) leadGrade = "hot";
+else if (score >= 50) leadGrade = "warm";
+else if (score >= 20) leadGrade = "cool";
+else leadGrade = "cold";
+
+// 추천 액션
+let recommendedAction;
+switch(leadGrade) {
+  case "hot":
+    recommendedAction = "즉시 영업팀 연락";
+    break;
+  case "warm":
+    recommendedAction = "맞춤형 이메일 캠페인";
+    break;
+  case "cool":
+    recommendedAction = "교육 콘텐츠 제공";
+    break;
+  default:
+    recommendedAction = "뉴스레터 구독 유도";
+}
+
+return {
+  user_id: $json.user_id,
+  email: $json.email,
+  total_score: score,
+  lead_grade: leadGrade,
+  score_log: scoreLog,
+  recommended_action: recommendedAction,
+  last_activity: new Date().toISOString()
+};
+```
+
+#### 개인화된 이메일 시퀀스
+
+```javascript
+// OpenAI로 개인화된 이메일 생성
+
+System Message:
+"마케팅 전문가로서 다음 리드 정보를 바탕으로 개인화된 이메일을 작성해주세요.
+
+리드 정보:
+- 등급: {{$json.lead_grade}}
+- 관심 페이지: {{$json.interested_pages}}
+- 최근 액션: {{$json.recent_actions}}
+
+이메일 요구사항:
+- 제목: 클릭을 유도하는 매력적인 제목
+- 본문: 3-4문단, 개인화된 내용
+- CTA: 명확한 행동 유도
+- 톤: 전문적이면서 친근한
+
+JSON 형식으로 응답:
+{
+  \"subject\": \"이메일 제목\",
+  \"body\": \"이메일 본문 (HTML)\",
+  \"cta_text\": \"CTA 버튼 텍스트\",
+  \"cta_url\": \"CTA URL\"
+}"
+```
+
+### 📝 실습 과제
+
+**과제 1**: A/B 테스트 자동화
+- 2가지 버전의 이메일 자동 생성
+- 무작위로 리드에게 할당
+- 오픈율/클릭률 자동 추적
+
+**과제 2**: 드립 캠페인
+- 7일간의 자동 이메일 시퀀스 구축
+- 각 이메일 반응에 따라 다음 이메일 조정
+
+**과제 3**: ROI 대시보드
+- 캠페인 비용 vs 전환 매출 계산
+- Google Sheets로 실시간 ROI 대시보드 생성
+
+---
+
+## 🎯 프로젝트 4: 소셜 미디어 자동화
+
+### 비즈니스 요구사항
+
+- 콘텐츠 자동 생성 및 스케줄링
+- 멘션 및 댓글 모니터링
+- 자동 응답 및 참여
+- 성과 분석 및 보고
+
+### 워크플로우 예제
+
+```javascript
+// 블로그 포스트에서 소셜 미디어 콘텐츠 자동 생성
+
+// 1. RSS Feed에서 최신 블로그 포스트 가져오기
+const latestPost = $node["RSS Feed"].json;
+
+// 2. OpenAI로 각 플랫폼별 콘텐츠 생성
+const platforms = ["twitter", "linkedin", "facebook"];
+
+for (const platform of platforms) {
+  // OpenAI 호출
+  const prompt = `
+다음 블로그 포스트를 ${platform}에 적합한 형식으로 변환해주세요:
+
+제목: ${latestPost.title}
+내용: ${latestPost.description}
+
+${platform} 가이드라인:
+${platform === 'twitter' ? '- 280자 이내\n- 해시태그 2-3개' : ''}
+${platform === 'linkedin' ? '- 전문적인 톤\n- 1-2문단' : ''}
+${platform === 'facebook' ? '- 친근한 톤\n- 이모지 사용' : ''}
+
+JSON 형식:
+{
+  "content": "포스트 내용",
+  "hashtags": ["해시태그1", "해시태그2"],
+  "best_time": "최적 게시 시간 (HH:MM)"
+}
+  `;
+
+  // 결과를 Buffer 또는 Schedule 노드로 전달
+}
+
+// 3. 각 플랫폼에 자동 게시
+// Twitter API, LinkedIn API, Facebook API 활용
+```
+
+---
+
+## 📁 참고 자료
+
+### data/ 폴더
+- `dashboard-template.json` - 대시보드 데이터 템플릿
+- `email-templates/` - 이메일 HTML 템플릿들
+- `sample-analytics-data.json` - 테스트용 분석 데이터
+
+### solutions/ 폴더
+- `01-business-dashboard.json` - 비즈니스 대시보드 완성 워크플로우
+- `02-customer-support.json` - 고객 지원 시스템 완성 워크플로우
+- `03-marketing-automation.json` - 마케팅 자동화 완성 워크플로우
+- `04-social-media.json` - 소셜 미디어 자동화 완성 워크플로우
+
+---
+
+## 💡 프로젝트 성공을 위한 팁
+
+### 1. 점진적 구축
+```
+❌ 한 번에 전체 시스템 구축
+✅ 작은 기능부터 시작하여 점진적 확장
+
+예:
+1주차: 데이터 수집만
+2주차: AI 분석 추가
+3주차: 알림 시스템 추가
+4주차: 최적화 및 개선
+```
+
+### 2. 에러 처리
+```javascript
+// 모든 주요 노드에 에러 처리 추가
+try {
+  const result = await fetchData();
+  return result;
+} catch (error) {
+  // 에러 로깅
+  console.error('Error:', error);
+
+  // Slack 알림
+  await notifyError({
+    workflow: $workflow.name,
+    error: error.message,
+    node: $node.name
+  });
+
+  // 기본값 반환 또는 재시도
+  return { error: true, retry: true };
+}
+```
+
+### 3. 성능 모니터링
+```javascript
+// 실행 시간 측정
+const startTime = Date.now();
+
+// ... 작업 수행 ...
+
+const executionTime = Date.now() - startTime;
+
+// 느린 실행 경고
+if (executionTime > 10000) { // 10초 이상
+  console.warn(`Slow execution: ${executionTime}ms`);
+}
+```
+
+### 4. 문서화
+```javascript
+// 각 워크플로우에 설명 추가
+// Sticky Note 노드 활용
+
+/**
+ * 워크플로우: 일일 비즈니스 대시보드
+ * 목적: 경영진에게 일일 KPI 리포트 자동 발송
+ * 실행 시간: 매일 오전 8시
+ * 담당자: IT팀
+ * 마지막 수정: 2024-11-06
+ *
+ * 주요 기능:
+ * 1. 매출 데이터 수집
+ * 2. 웹사이트 통계 분석
+ * 3. AI 인사이트 생성
+ * 4. 이메일 리포트 발송
+ */
+```
+
+---
+
+## ✅ 최종 체크리스트
+
+- [ ] 비즈니스 대시보드 프로젝트 완성
+- [ ] 고객 지원 시스템 구현
+- [ ] 마케팅 자동화 캠페인 구축
+- [ ] 소셜 미디어 자동화 구현
+- [ ] 에러 처리 및 모니터링 추가
+- [ ] 성능 최적화 완료
+- [ ] 문서화 완료
+- [ ] 실전 배포 준비 완료
+
+---
+
+## 🎓 다음 단계
+
+### 지속적인 개선
+1. **사용자 피드백 수집**: 실제 사용자의 의견 청취
+2. **성능 데이터 분석**: 어떤 워크플로우가 가장 많이 사용되는지 파악
+3. **새로운 기능 추가**: 비즈니스 요구사항 변화에 따라 확장
+4. **보안 강화**: 정기적인 인증 정보 갱신 및 액세스 검토
+
+### 커뮤니티 참여
+1. **워크플로우 공유**: n8n 커뮤니티에 유용한 워크플로우 공유
+2. **문제 해결 지원**: 다른 사용자들을 도우며 함께 성장
+3. **새로운 아이디어 탐색**: 커뮤니티에서 영감 얻기
+
+### 고급 학습
+1. **커스텀 노드 개발**: TypeScript로 자체 노드 개발
+2. **n8n 셀프 호스팅**: 더 많은 제어와 커스터마이징
+3. **엔터프라이즈 기능**: 팀 협업, 버전 관리, CI/CD 통합
+
+---
+
+**이전 단계**: [04. AI 자동화](../04-ai-automation/README.md)
+**완료**: 모든 실습 과정을 마쳤습니다! 🎉

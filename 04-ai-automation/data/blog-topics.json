@@ -1,0 +1,37 @@
+[
+  {
+    "topic": "중소기업을 위한 업무 자동화 가이드",
+    "target_audience": "중소기업 경영자, IT 관리자",
+    "tone": "전문적이면서 실용적인",
+    "word_count": 1000,
+    "keywords": ["업무자동화", "생산성", "비용절감", "n8n"]
+  },
+  {
+    "topic": "코딩 없이 만드는 AI 챗봇",
+    "target_audience": "비개발자, 마케터",
+    "tone": "친근하고 쉬운",
+    "word_count": 800,
+    "keywords": ["AI챗봇", "no-code", "고객서비스"]
+  },
+  {
+    "topic": "스타트업을 위한 마케팅 자동화 전략",
+    "target_audience": "스타트업 마케터, 창업자",
+    "tone": "혁신적이고 영감을 주는",
+    "word_count": 1200,
+    "keywords": ["마케팅자동화", "리드생성", "전환율향상"]
+  },
+  {
+    "topic": "Google Sheets로 만드는 간단한 CRM",
+    "target_audience": "소규모 비즈니스 운영자",
+    "tone": "실용적이고 단계별 가이드",
+    "word_count": 900,
+    "keywords": ["CRM", "Google Sheets", "고객관리"]
+  },
+  {
+    "topic": "원격 근무 시대의 협업 자동화",
+    "target_audience": "프로젝트 매니저, 팀 리더",
+    "tone": "전문적이고 미래지향적",
+    "word_count": 1100,
+    "keywords": ["원격근무", "협업도구", "프로젝트관리"]
+  }
+]

@@ -1,0 +1,6 @@
+제품명,URL,가격선택자,재고선택자,비고
+프리미엄 이어폰,https://example.com/products/earphone,.price-current,.stock-status,매일 체크
+노이즈캔슬링 헤드폰,https://example.com/products/headphone,#product-price,.availability,주말 제외
+블루투스 스피커,https://competitor.com/bluetooth-speaker,.price-box .final-price,.in-stock,6시간마다
+스마트워치,https://competitor.com/smartwatch,.product-price-value,.stock-label,신제품
+무선 충전기,https://example.com/wireless-charger,.current-price,.product-stock,품절 알림
