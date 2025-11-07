@@ -203,4 +203,40 @@ curl -X POST YOUR_WEBHOOK_URL \
 
 ---
 
+## 🔧 다양한 환경에서 테스트하기
+
+### 테스트 스크립트 사용법
+
+이 폴더에는 여러 환경을 지원하는 테스트 스크립트가 제공됩니다:
+
+#### Bash (macOS/Linux)
+```bash
+chmod +x scripts/test-hello-world.sh
+./scripts/test-hello-world.sh YOUR_WEBHOOK_URL
+```
+
+#### PowerShell (Windows)
+```powershell
+.\scripts\test-hello-world.ps1 YOUR_WEBHOOK_URL
+```
+
+#### Node.js (크로스 플랫폼)
+```bash
+node scripts/test-hello-world.js YOUR_WEBHOOK_URL
+```
+
+#### Python (크로스 플랫폼)
+```bash
+python scripts/test-hello-world.py YOUR_WEBHOOK_URL
+```
+
+### 어떤 스크립트를 사용해야 할까요?
+
+- **Windows 사용자**: PowerShell (`.ps1`) 또는 Node.js/Python
+- **macOS/Linux 사용자**: Bash (`.sh`) 또는 Node.js/Python
+- **Node.js에 익숙한 개발자**: Node.js (`.js`)
+- **Python에 익숙한 개발자**: Python (`.py`)
+
+---
+
 **다음 단계**: [02. Google Sheets 연동](../02-google-sheets/README.md)

@@ -591,5 +591,21 @@ try {
 
 ---
 
+## 🚀 고급: 실전 AI 데이터 수집 및 처리
+
+기본 실습을 완료한 후, 실제 서비스와 AI를 연동하는 방법을 배우고 싶다면:
+
+**→ [고급 가이드: Gmail + AI 자동 분석, 실시간 대시보드, AI 품질 향상](advanced/README.md)**
+
+고급 가이드에서 배울 내용:
+- Gmail Trigger로 실시간 이메일 수신 및 AI 분석
+- OpenAI Function Calling으로 정확한 분류
+- 복합 우선순위 계산 알고리즘
+- AI 품질 향상 기법 (Few-Shot, Chain of Thought, Self-Consistency)
+- Google Analytics 4 & Stripe 실시간 데이터 수집
+- AI API 비용 최적화 전략
+
+---
+
 **이전 단계**: [03. 웹 스크래핑](../03-web-scraping/README.md)
 **다음 단계**: [05. 실무 유스케이스](../05-use-cases/README.md)

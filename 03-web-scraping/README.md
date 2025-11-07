@@ -495,5 +495,20 @@ const normalizeUrl = (url, baseUrl) => {
 
 ---
 
+## 🚀 고급: 실전 웹 스크래핑
+
+기본 실습을 완료한 후, 더 고급 기법을 배우고 싶다면:
+
+**→ [고급 가이드: JavaScript 렌더링, 봇 탐지 우회, 인증 처리](advanced/README.md)**
+
+고급 가이드에서 배울 내용:
+- JavaScript 렌더링 사이트 스크래핑 (Puppeteer/Browserless)
+- 봇 탐지 우회 기법 (User-Agent 로테이션, 프록시 사용)
+- 페이지네이션 및 무한 스크롤 처리
+- 로그인이 필요한 사이트 스크래핑
+- 실전 프로젝트: 부동산 매물 모니터링 시스템
+
+---
+
 **이전 단계**: [02. Google Sheets 연동](../02-google-sheets/README.md)
 **다음 단계**: [04. AI 자동화](../04-ai-automation/README.md)

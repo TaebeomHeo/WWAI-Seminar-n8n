@@ -379,5 +379,40 @@ Column G: 동기화시간 → current timestamp
 
 ---
 
+## 🔧 다양한 환경에서 테스트하기
+
+테스트 스크립트가 여러 언어로 제공됩니다:
+
+```bash
+# Bash (macOS/Linux)
+./scripts/test-sales-tracker.sh YOUR_WEBHOOK_URL
+
+# PowerShell (Windows)
+.\scripts\test-sales-tracker.ps1 YOUR_WEBHOOK_URL
+
+# Node.js
+node scripts/test-sales-tracker.js YOUR_WEBHOOK_URL
+
+# Python
+python scripts/test-sales-tracker.py YOUR_WEBHOOK_URL
+```
+
+---
+
+## 🚀 고급: 실제 데이터 수집
+
+기본 실습을 완료한 후, 실제 서비스에서 데이터를 수집하는 방법을 배우고 싶다면:
+
+**→ [고급 가이드: Gmail, Google Analytics 등 실제 데이터 수집](advanced/README.md)**
+
+고급 가이드에서 배울 내용:
+- Gmail API로 실제 이메일 데이터 수집
+- Google Analytics 4 실시간 데이터 수집
+- CRM/Database 연동 및 데이터 동기화
+- API 한도 관리 및 에러 처리
+- 증분 동기화 (Incremental Sync)
+
+---
+
 **이전 단계**: [01. n8n 기초](../01-basics/README.md)
 **다음 단계**: [03. 웹 스크래핑](../03-web-scraping/README.md)
