@@ -564,6 +564,55 @@ JSON 형식:
 
 ---
 
+## 🎯 프로젝트 5: 공유 폴더 파일 자동 분석 및 비교 시스템 ⭐ NEW
+
+### 비즈니스 요구사항
+
+팀 공유 폴더(Google Drive, OneDrive, NAS 등)에 새로운 문서가 업로드될 때마다:
+- 📄 자동으로 문서 내용 요약
+- 🔍 유사한 파일명이 있으면 기존 문서와 비교 분석
+- 📧 분석 결과를 이메일 또는 Slack으로 팀에 알림
+- 📊 문서 로그를 자동으로 관리
+
+### 핵심 기능
+
+1. **자동 모니터링**
+   - Polling (5분 간격) 또는 Webhook 방식
+   - 다양한 파일 형식 지원 (PDF, Word, Excel, 텍스트)
+
+2. **AI 기반 분석**
+   - GPT-4 Turbo / Claude / Gemini 선택 가능
+   - 문서 타입 자동 분류 (보고서/제안서/계약서/회의록)
+   - 핵심 키워드 및 실행 항목 추출
+   - 긴급도 자동 판단
+
+3. **지능형 비교**
+   - 파일명 유사도 알고리즘 (Levenshtein + Jaccard)
+   - 버전 패턴 자동 감지 (v1, v2, 초안, 최종 등)
+   - AI로 문서 간 차이점 분석
+
+4. **유연한 알림**
+   - 이메일 (상세 HTML 리포트)
+   - Slack (인터랙티브 블록)
+   - Microsoft Teams
+   - 긴급도에 따라 알림 채널 자동 선택
+
+### 상세 구현 가이드
+
+**→ [프로젝트 5 상세 가이드](./file-intelligence/README.md)**
+
+이 프로젝트에서 배우는 내용:
+- Google Drive API 연동 (Polling vs Webhook)
+- PDF/Word 문서 텍스트 추출
+- 파일명 유사도 계산 알고리즘
+- OpenAI JSON Mode & Function Calling
+- Claude vs GPT-4 vs Gemini 비교
+- 고급 프롬프트 엔지니어링
+- 비용 최적화 전략
+- 다양한 알림 채널 통합
+
+---
+
 ## 📁 참고 자료
 
 ### data/ 폴더
@@ -576,6 +625,11 @@ JSON 형식:
 - `02-customer-support.json` - 고객 지원 시스템 완성 워크플로우
 - `03-marketing-automation.json` - 마케팅 자동화 완성 워크플로우
 - `04-social-media.json` - 소셜 미디어 자동화 완성 워크플로우
+
+### file-intelligence/ 폴더 ⭐ NEW
+- `README.md` - 파일 자동 분석 시스템 완전 가이드
+- `scripts/similarity-calculator.js` - 파일명 유사도 계산기
+- `scripts/test-file-upload.py` - 테스트 파일 업로드 도구
 
 ---
 
