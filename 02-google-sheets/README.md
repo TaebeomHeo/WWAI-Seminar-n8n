@@ -13,28 +13,64 @@
 
 ### Google Sheets API 인증 설정
 
-1. **Google Cloud Console 접속**
-   - https://console.cloud.google.com 접속
-   - 프로젝트 생성 또는 선택
+> **⏱️ 예상 소요 시간**: 15-20분 (처음 설정 시)
+>
+> **📖 상세 가이드 보기**: **[Google Cloud Console 설정 가이드 (GOOGLE_CLOUD_SETUP.md)](GOOGLE_CLOUD_SETUP.md)**
+>
+> 위 링크의 상세 가이드에는 다음이 포함되어 있습니다:
+> - 스크린샷 설명과 함께하는 단계별 가이드
+> - 자주 발생하는 8가지 오류와 해결 방법
+> - JSON 키 파일 안전하게 보관하는 방법
+> - 연결 테스트 방법
 
-2. **API 활성화**
-   - "API 및 서비스" > "라이브러리" 이동
-   - "Google Sheets API" 검색 및 활성화
+#### 빠른 요약 (5단계)
 
-3. **서비스 계정 생성**
-   - "API 및 서비스" > "사용자 인증 정보"
-   - "사용자 인증 정보 만들기" > "서비스 계정"
-   - 서비스 계정 이름 입력 (예: n8n-automation)
-   - JSON 키 파일 다운로드
+처음 설정하는 분은 **상세 가이드를 반드시 참고**하세요!
 
-4. **n8n에 인증 정보 추가**
-   - n8n에서 "Credentials" 메뉴 이동
-   - "Add Credential" > "Google Sheets API"
-   - Service Account Email과 Private Key 입력
+**1단계: Google Cloud 프로젝트 생성**
+- https://console.cloud.google.com 접속
+- "새 프로젝트" 생성 (예: `n8n-automation`)
 
-5. **Google Sheets 공유**
-   - 작업할 Google Sheets를 서비스 계정 이메일과 공유
-   - 편집자 권한 부여
+**2단계: Google Sheets API 활성화**
+- "API 및 서비스" → "라이브러리"
+- "Google Sheets API" 검색 → "사용" 버튼 클릭
+
+**3단계: 서비스 계정 생성 및 키 다운로드**
+- "API 및 서비스" → "사용자 인증 정보"
+- "사용자 인증 정보 만들기" → "서비스 계정"
+- 서비스 계정 이름: `n8n-sheets-automation`
+- "키" 탭 → "키 추가" → "새 키 만들기" → **JSON** 선택
+- `.json` 파일 다운로드 → **안전한 곳에 보관** ⚠️
+
+**4단계: n8n에 인증 정보 추가**
+- n8n에서 Google Sheets 노드 추가
+- "Create New Credential" 클릭
+- **Service Account** 방식 선택
+- JSON 파일 내용 전체를 "Credential Data"에 붙여넣기
+- 또는 `client_email`과 `private_key` 개별 입력
+
+**5단계: Google Sheets 공유**
+- 작업할 Google Sheets 열기
+- 우측 상단 "공유" 버튼
+- 서비스 계정 이메일 주소 입력 (예: `n8n-sheets-automation@...`)
+- 권한: **편집자** (쓰기 필요 시) 또는 **뷰어** (읽기만)
+- "알림 보내기" 체크 해제 → "완료"
+
+#### ⚠️ 중요 사항
+
+**보안**:
+- JSON 키 파일은 절대 GitHub, 공개 저장소에 업로드 금지!
+- `.gitignore`에 `*.json` 추가 필수
+- 안전한 위치에 보관: `~/Documents/n8n-credentials/`
+
+**자주 발생하는 오류**:
+- ❌ "Invalid credentials" → Private Key 복사 오류 ([해결법](GOOGLE_CLOUD_SETUP.md#문제-1-invalid-credentials-오류))
+- ❌ "Insufficient permissions" → 시트 공유 안 됨 ([해결법](GOOGLE_CLOUD_SETUP.md#문제-2-insufficient-permissions-오류))
+- ❌ "Range not found" → 시트 이름 오타 ([해결법](GOOGLE_CLOUD_SETUP.md#문제-4-range-not-found-오류))
+
+**막히면**:
+- [상세 가이드의 문제 해결 섹션](GOOGLE_CLOUD_SETUP.md#문제-해결) 참고
+- 전체 체크리스트로 빠뜨린 단계 확인
 
 ---
 

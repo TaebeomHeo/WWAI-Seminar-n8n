@@ -143,3 +143,18 @@ vite.config.ts.timestamp-*
 .vscode/
 .idea/
 .claude/
+
+# Google Cloud Credentials (보안 - 절대 커밋 금지!)
+**/credentials.json
+**/service-account.json
+**/credentials/*.json
+**/*-credentials.json
+**/*-service-account.json
+**/*-key.json
+**/gcloud-*.json
+**/google-*.json
+
+# API Keys and Secrets
+**/secrets/
+**/api-keys/
+**/.credentials/
