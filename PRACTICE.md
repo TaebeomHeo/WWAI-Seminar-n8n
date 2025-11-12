@@ -37,6 +37,20 @@ WWAI-Seminar-n8n/
 │
 └── 05-use-cases/               # Part 5: 실무 프로젝트
     ├── README.md
+    ├── file-intelligence/      # 프로젝트 5: 파일 분석 시스템 ⭐
+    │   ├── OVERVIEW.md         # 프로젝트 소개
+    │   ├── README.md           # 14단계 구현 가이드
+    │   ├── scripts/            # 테스트 스크립트
+    │   ├── data/               # 샘플 데이터
+    │   └── workflows/          # 완성 워크플로우 JSON
+    │
+    ├── daily-report-intelligence/  # 프로젝트 6: 보고서 자동화 ⭐
+    │   ├── OVERVIEW.md         # 프로젝트 소개 및 ROI
+    │   ├── README.md           # 상세 구현 가이드
+    │   ├── scripts/            # 테스트 스크립트
+    │   ├── data/               # 샘플 보고서
+    │   └── workflows/          # 완성 워크플로우 JSON
+    │
     ├── solutions/
     └── data/
 ```
@@ -225,6 +239,8 @@ docker run -it --rm \
 2. **고객 지원 시스템**: AI 기반 티켓 분류 및 자동 응답
 3. **마케팅 자동화**: 리드 스코어링 및 개인화 캠페인
 4. **소셜 미디어 자동화**: 콘텐츠 생성 및 스케줄링
+5. **공유 폴더 파일 분석** ⭐: Google Drive/OneDrive 파일 자동 분석 및 비교
+6. **PM 일일보고서 자동화** ⭐: 보고서 품질 검증 및 통합 대시보드
 
 **진행 방법:**
 1. `05-use-cases/README.md`에서 프로젝트 선택
@@ -233,11 +249,27 @@ docker run -it --rm \
 4. 단계별 구현
 5. 테스트 및 개선
 
+**⭐ 신규 프로젝트 (고급 - 추천!):**
+
+**프로젝트 5: 공유 폴더 파일 자동 분석 시스템**
+- **난이도**: ⭐⭐⭐⭐☆ (중상급)
+- **예상 시간**: 4-6시간
+- **학습 내용**: Google Drive API, PDF/Word 파싱, AI 문서 분석, 파일명 유사도 알고리즘
+- **시작하기**: [`file-intelligence/OVERVIEW.md`](05-use-cases/file-intelligence/OVERVIEW.md)부터 읽기
+
+**프로젝트 6: PM 일일보고서 자동화 시스템**
+- **난이도**: ⭐⭐⭐⭐☆ (중상급)
+- **예상 시간**: 4-6시간
+- **학습 내용**: 2가지 연계 워크플로우, AI 품질 검증, 감정 분석, 통합 대시보드
+- **ROI**: 연 6,000만원 절감 (PM 10명 기준)
+- **시작하기**: [`daily-report-intelligence/OVERVIEW.md`](05-use-cases/daily-report-intelligence/OVERVIEW.md)부터 읽기
+
 **완료 체크:**
 - [ ] 최소 1개 프로젝트 완성
 - [ ] 에러 처리 추가
 - [ ] 문서화 완료
 - [ ] 실제 업무에 적용 가능한 수준
+- [ ] (도전!) 프로젝트 5 또는 6 완성
 
 ---
 

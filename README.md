@@ -928,6 +928,83 @@ return {
 };
 ```
 
+### 🎯 프로젝트 5: 공유 폴더 파일 자동 분석 시스템 ⭐
+
+#### 목표
+
+```
+팀 공유 폴더(Google Drive, OneDrive, NAS)에 업로드되는 문서를
+AI로 자동 분석하고, 유사 파일과 비교하여 팀에 알림
+```
+
+#### 핵심 기능
+
+- **자동 모니터링**: 5분마다 폴링 또는 Webhook으로 새 파일 감지
+- **AI 문서 분석**: GPT-4/Claude/Gemini로 내용 요약 및 분류
+- **지능형 비교**: 유사 파일명 감지 (Levenshtein + Jaccard 알고리즘)
+- **다채널 알림**: Email, Slack, Teams로 분석 결과 발송
+
+#### 실무 활용 예시
+
+```
+시나리오: 계약서 버전 관리
+1. "계약서_고객A_v2.pdf" 업로드 감지
+2. AI가 기존 "계약서_고객A_v1.pdf"와 유사도 95% 발견
+3. 두 문서의 차이점 자동 분석
+4. 법무팀에 비교 결과 이메일 발송
+   → "수정 사항: 계약 금액 1억 → 1.5억, 납기일 3개월 연장"
+```
+
+**상세 가이드**: [`05-use-cases/file-intelligence/`](05-use-cases/file-intelligence/)
+- [OVERVIEW.md](05-use-cases/file-intelligence/OVERVIEW.md) - 프로젝트 소개
+- [README.md](05-use-cases/file-intelligence/README.md) - 14단계 구현 가이드
+
+---
+
+### 🎯 프로젝트 6: PM 일일보고서 자동화 시스템 ⭐
+
+#### 목표
+
+```
+PM 보고서 작성 부담 70% 감소 + 관리자 분석 시간 85% 단축
+AI 기반 품질 검증 및 통합 대시보드 자동화
+```
+
+#### 2가지 워크플로우
+
+**Workflow 1 (PM용)**: 보고서 작성 지원
+- 품질 자동 검증 (0-100점 채점)
+- 누락 항목 감지
+- AI 개선 제안 생성
+- 이메일 자동 발송
+
+**Workflow 2 (관리자용)**: 통합 분석 대시보드
+- 매일 자동으로 모든 보고서 수집
+- AI 심층 분석 (상태/이슈/감정/도움요청)
+- Google Sheets 대시보드 업데이트
+- Slack 우선순위 알림
+
+#### 실무 활용 예시
+
+```
+PM 김철수의 하루:
+18:00 - Slack에서 /daily-report 입력
+18:05 - 간단히 bullet points 작성
+18:07 - AI 검증 완료 "85점, 개선 제안 2개"
+18:10 - 제안 반영 후 제출
+소요 시간: 10분 (기존 30분 → 67% 절감)
+
+관리자 이사장의 아침:
+09:00 - Slack 알림 "🚨 긴급 1개, ⚠️ 주의 2개"
+09:02 - 긴급 프로젝트 클릭 (AI 분석 완료)
+09:05 - 해당 PM 즉시 지원
+소요 시간: 5분 (기존 60분 → 92% 절감)
+```
+
+**상세 가이드**: [`05-use-cases/daily-report-intelligence/`](05-use-cases/daily-report-intelligence/)
+- [OVERVIEW.md](05-use-cases/daily-report-intelligence/OVERVIEW.md) - 프로젝트 소개 및 ROI
+- [README.md](05-use-cases/daily-report-intelligence/README.md) - 상세 구현 가이드
+
 ---
 
 ## 🛠️ 실무 팁 및 베스트 프랙티스
