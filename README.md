@@ -63,6 +63,7 @@
 
 1. **클라우드 버전** : https://app.n8n.cloud 회원가입
 2. **데스크톱 버전** : https://n8n.io/download (선택사항)
+3. **와이즈와이어즈 그룹 버전** : https://n8n.wisewires.com
 
 #### Step 2: 첫 번째 워크플로우 만들기
 
