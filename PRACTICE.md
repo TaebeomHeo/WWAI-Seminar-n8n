@@ -51,6 +51,13 @@ WWAI-Seminar-n8n/
     │   ├── data/               # 샘플 보고서
     │   └── workflows/          # 완성 워크플로우 JSON
     │
+    ├── schedule-intelligence/  # 프로젝트 7: 일정 자동 추출 ⭐ NEW
+    │   ├── OVERVIEW.md         # 프로젝트 소개 및 시나리오
+    │   ├── README.md           # 상세 구현 가이드
+    │   ├── scripts/            # 테스트 스크립트
+    │   ├── data/               # 샘플 이메일
+    │   └── workflows/          # 완성 워크플로우 JSON
+    │
     ├── solutions/
     └── data/
 ```
@@ -263,6 +270,14 @@ docker run -it --rm \
 - **학습 내용**: 2가지 연계 워크플로우, AI 품질 검증, 감정 분석, 통합 대시보드
 - **ROI**: 연 6,000만원 절감 (PM 10명 기준)
 - **시작하기**: [`daily-report-intelligence/OVERVIEW.md`](05-use-cases/daily-report-intelligence/OVERVIEW.md)부터 읽기
+
+**프로젝트 7: 일정 자동 추출 및 Google Calendar 등록 시스템 ⭐ NEW**
+- **난이도**: ⭐⭐⭐⭐☆ (중상급)
+- **예상 시간**: 3-5시간
+- **학습 내용**: Gmail API, Google Calendar API, 한국어 날짜 NLP, Levenshtein Distance, AI 프롬프트 최적화
+- **ROI**: 월 20시간 절약 = 약 62만원 (개인), 600만원 (팀 10명)
+- **핵심 기능**: 이메일에서 일정 자동 추출, 중복 방지, 확신도 기반 자동 등록
+- **시작하기**: [`schedule-intelligence/OVERVIEW.md`](05-use-cases/schedule-intelligence/OVERVIEW.md)부터 읽기
 
 **완료 체크:**
 - [ ] 최소 1개 프로젝트 완성
